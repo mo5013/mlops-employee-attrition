@@ -11,6 +11,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
       - name: Check out repository
@@ -32,11 +34,13 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest tests/ -v
+          python -m pytest tests/ -v
 
   train:
     runs-on: ubuntu-latest
     needs: test
+    env:
+      PYTHONPATH: ${{ github.workspace }}
 
     steps:
       - name: Check out repository
