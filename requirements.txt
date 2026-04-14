@@ -1,0 +1,6 @@
+pandas==2.3.0
+scikit-learn==1.8.0
+pyyaml==6.0.3
+joblib==1.5.2
+mlflow==3.1.1
+pytest==9.0.3
