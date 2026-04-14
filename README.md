@@ -27,7 +27,9 @@ After running the script, update this section with your actual output:
 
 ### Interpretation
 
-The detected drift suggests that the incoming production data no longer follows the same distribution as the training data. This matters because the model was trained on the reference distribution, so substantial changes in numeric or categorical feature patterns can reduce model performance and reliability.
+No significant drift was detected between the reference and simulated production data. This suggests that the feature distributions remain similar, and the model is likely to maintain stable performance under these conditions.
+
+However, the simulated changes demonstrate how drift could be introduced, and monitoring remains important to detect future distribution shifts.
 
 For this project, drift in features such as `MonthlyIncome`, `DistanceFromHome`, `OverTime`, or `JobRole` would likely affect the model because these employee-related attributes are directly relevant to attrition prediction.
 
