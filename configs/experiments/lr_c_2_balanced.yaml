@@ -1,0 +1,54 @@
+project:
+  name: employee_attrition_mlops
+  random_state: 42
+data:
+  raw_data_path: data/raw/WA_Fn-UseC_-HR-Employee-Attrition.csv
+  processed_train_path: data/processed/train.csv
+  processed_test_path: data/processed/test.csv
+  target_column: Attrition
+  test_size: 0.2
+  data_version: v1_employee_attrition_raw
+preprocessing:
+  simulate_missing: true
+  missing_fraction: 0.05
+  numeric_features:
+  - Age
+  - DailyRate
+  - DistanceFromHome
+  - HourlyRate
+  - MonthlyIncome
+  - MonthlyRate
+  - NumCompaniesWorked
+  - PercentSalaryHike
+  - TotalWorkingYears
+  - TrainingTimesLastYear
+  - YearsAtCompany
+  - YearsInCurrentRole
+  - YearsSinceLastPromotion
+  - YearsWithCurrManager
+  categorical_features:
+  - BusinessTravel
+  - Department
+  - EducationField
+  - Gender
+  - JobRole
+  - MaritalStatus
+  - OverTime
+model:
+  type: logistic_regression
+  C: 2.0
+  max_iter: 1500
+  class_weight: balanced
+metrics:
+  primary: f1
+  minimum_f1_threshold: 0.3
+  additional:
+  - accuracy
+  - roc_auc
+mlflow:
+  experiment_name: employee_attrition_experiments
+  tracking_uri: file:./mlruns
+monitoring:
+  drift_threshold: 0.3
+  report_path: reports/drift_report.html
+run_name: lr_c_2_balanced

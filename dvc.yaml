@@ -1,0 +1,10 @@
+stages:
+  preprocess:
+    cmd: py src/preprocess.py
+    deps:
+    - configs/config.yaml
+    - data/raw/WA_Fn-UseC_-HR-Employee-Attrition.csv
+    - src/preprocess.py
+    outs:
+    - data/processed/test.csv
+    - data/processed/train.csv

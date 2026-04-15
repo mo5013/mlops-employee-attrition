@@ -1,0 +1,26 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: py src/preprocess.py
+    deps:
+    - path: configs/config.yaml
+      hash: md5
+      md5: 6bb4664631037bc382071966fa02feb8
+      size: 1259
+    - path: data/raw/WA_Fn-UseC_-HR-Employee-Attrition.csv
+      hash: md5
+      md5: ad8207459e5732574372cf8ff619883f
+      size: 227977
+    - path: src/preprocess.py
+      hash: md5
+      md5: 6505ad0e78870155c0e0c16a9af0c2ca
+      size: 4925
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 83d0c4d7446c7c174a4425ed76c32abc
+      size: 46203
+    - path: data/processed/train.csv
+      hash: md5
+      md5: b9d7ec9613718b867ec7fc7696c5e82c
+      size: 183425

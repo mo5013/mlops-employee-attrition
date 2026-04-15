@@ -3,6 +3,7 @@ import sys
 import json
 import yaml
 import joblib
+import argparse
 import pandas as pd
 import mlflow
 import mlflow.sklearn
@@ -16,17 +17,11 @@ from sklearn.metrics import f1_score, accuracy_score, roc_auc_score
 
 
 def load_config(config_path: str) -> dict:
-    """
-    Load YAML configuration file.
-    """
     with open(config_path, "r", encoding="utf-8") as file:
         return yaml.safe_load(file)
 
 
 def load_data(file_path: str) -> pd.DataFrame:
-    """
-    Load CSV file into a dataframe.
-    """
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File not found: {file_path}")
     return pd.read_csv(file_path)
@@ -36,9 +31,6 @@ def build_preprocessor(
     numeric_features: list[str],
     categorical_features: list[str]
 ) -> ColumnTransformer:
-    """
-    Build preprocessing transformer for numeric and categorical columns.
-    """
     numeric_transformer = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="median")),
@@ -53,20 +45,15 @@ def build_preprocessor(
         ]
     )
 
-    preprocessor = ColumnTransformer(
+    return ColumnTransformer(
         transformers=[
             ("num", numeric_transformer, numeric_features),
             ("cat", categorical_transformer, categorical_features)
         ]
     )
 
-    return preprocessor
-
 
 def build_model(config: dict) -> LogisticRegression:
-    """
-    Build model from config settings.
-    """
     model_config = config["model"]
 
     if model_config["type"] != "logistic_regression":
@@ -85,50 +72,37 @@ def evaluate_model(
     x_test: pd.DataFrame,
     y_test: pd.Series
 ) -> dict:
-    """
-    Evaluate trained model and return metrics.
-    """
     predictions = model_pipeline.predict(x_test)
     probabilities = model_pipeline.predict_proba(x_test)[:, 1]
 
-    metrics = {
+    return {
         "f1": f1_score(y_test, predictions),
         "accuracy": accuracy_score(y_test, predictions),
         "roc_auc": roc_auc_score(y_test, probabilities)
     }
 
-    return metrics
-
 
 def save_model(model_pipeline: Pipeline, output_path: str) -> None:
-    """
-    Save trained pipeline to disk.
-    """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     joblib.dump(model_pipeline, output_path)
 
 
 def save_metrics(metrics: dict, output_path: str) -> None:
-    """
-    Save evaluation metrics to JSON.
-    """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as file:
         json.dump(metrics, file, indent=2)
 
 
-def log_to_mlflow(config: dict, metrics: dict, model_pipeline: Pipeline) -> None:
-    """
-    Log parameters, metrics, and model to MLflow.
-    """
+def log_to_mlflow(config: dict, metrics: dict, model_pipeline: Pipeline) -> str:
     mlflow_config = config["mlflow"]
     data_config = config["data"]
     model_config = config["model"]
+    run_name = config.get("run_name")
 
     mlflow.set_tracking_uri(mlflow_config["tracking_uri"])
     mlflow.set_experiment(mlflow_config["experiment_name"])
 
-    with mlflow.start_run():
+    with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_param("model_type", model_config["type"])
         mlflow.log_param("C", model_config["C"])
         mlflow.log_param("max_iter", model_config["max_iter"])
@@ -147,11 +121,10 @@ def log_to_mlflow(config: dict, metrics: dict, model_pipeline: Pipeline) -> None
             artifact_path="model"
         )
 
+        return run.info.run_id
+
 
 def check_performance_threshold(metrics: dict, min_f1: float) -> None:
-    """
-    Exit with non-zero status if model performance is below threshold.
-    """
     if metrics["f1"] < min_f1:
         print(
             f"Training failed: F1 score {metrics['f1']:.4f} is below minimum threshold {min_f1:.4f}."
@@ -159,8 +132,8 @@ def check_performance_threshold(metrics: dict, min_f1: float) -> None:
         sys.exit(1)
 
 
-def main():
-    config = load_config("configs/config.yaml")
+def main(config_path: str):
+    config = load_config(config_path)
 
     train_path = config["data"]["processed_train_path"]
     test_path = config["data"]["processed_test_path"]
@@ -194,10 +167,11 @@ def main():
 
     save_model(model_pipeline, "models/model.joblib")
     save_metrics(metrics, "reports/metrics.json")
-    log_to_mlflow(config, metrics, model_pipeline)
+    run_id = log_to_mlflow(config, metrics, model_pipeline)
     check_performance_threshold(metrics, min_f1)
 
     print("Training complete.")
+    print(f"Run ID: {run_id}")
     print(f"F1 Score: {metrics['f1']:.4f}")
     print(f"Accuracy: {metrics['accuracy']:.4f}")
     print(f"ROC-AUC: {metrics['roc_auc']:.4f}")
@@ -207,4 +181,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--config",
+        default="configs/config.yaml",
+        help="Path to YAML config file."
+    )
+    args = parser.parse_args()
+    main(args.config)

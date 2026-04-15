@@ -6,7 +6,10 @@ __pycache__/
 # Data and artifacts
 data/processed/
 models/
-reports/
+reports/*
+!reports/experiment_runs_summary.csv
+!reports/experiment_runs_summary.md
+!reports/drift_report.html
 mlruns/
 
 # Environment
