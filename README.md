@@ -45,7 +45,7 @@ The script is also configured to exit with a non-zero status code when drift exc
 
 ## DVC Data Versioning
 
-This project uses DVC to track the raw dataset instead of storing the dataset directly in Git.
+This project uses DVC to track the dataset instead of storing it directly in Git, ensuring reproducibility and proper version control of data artifacts.
 
 ### DVC Files Included
 
@@ -59,5 +59,18 @@ This project uses DVC to track the raw dataset instead of storing the dataset di
 From a fresh clone, run:
 
 ```bash
+pip install -r requirements.txt
 dvc pull
 dvc repro
+
+
+### Experiment Tracking (MLflow)
+
+This project uses MLflow to track model experiments and compare performance across configurations.
+
+### Running Experiments
+
+To execute multiple experiments:
+
+```bash
+python src/run_experiments.py
