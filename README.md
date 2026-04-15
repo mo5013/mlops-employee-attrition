@@ -31,7 +31,7 @@ This project builds an end-to-end MLOps pipeline for predicting employee attriti
 Clone the repository and install dependencies:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/mo5013/mlops-employee-attrition.git
 cd mlops-employee-attrition
 pip install -r requirements.txt
 ```
@@ -40,29 +40,28 @@ pip install -r requirements.txt
 
 ## Reproducibility with DVC
 
-This project uses DVC (Data Version Control) to track datasets and ensure reproducibility.
+This project uses DVC (Data Version Control) to define and reproduce the preprocessing pipeline.
 
 ### DVC Files Included
 
-* `.dvc/`
-* `data/raw/WA_Fn-UseC_-HR-Employee-Attrition.csv.dvc`
-* `dvc.yaml`
-* `dvc.lock`
+- `.dvc/`
+- `data/raw/WA_Fn-UseC_-HR-Employee-Attrition.csv.dvc`
+- `dvc.yaml`
+- `dvc.lock`
 
 ### Reproducing the Data Pipeline
 
 From a fresh clone, run:
 
 ```bash
-dvc pull
 dvc repro
 ```
 
 This will:
 
-* download the dataset
-* run preprocessing
-* generate train/test splits
+- run the preprocessing stage
+- generate train/test splits
+- ensure reproducible data transformations
 
 ---
 
@@ -76,11 +75,11 @@ python src/train.py
 
 The training process:
 
-* loads configuration from YAML
-* trains a classification model
-* evaluates performance
-* saves the model and metrics
-* logs results to MLflow
+- loads configuration from YAML
+- trains a classification model
+- evaluates performance
+- saves the model and metrics
+- logs results to MLflow
 
 ---
 
@@ -98,17 +97,17 @@ python src/run_experiments.py
 
 This script runs several configurations and logs:
 
-* F1 Score
-* Accuracy
-* ROC-AUC
-* Model parameters
+- F1 Score
+- Accuracy
+- ROC-AUC
+- Model parameters
 
 ### Experiment Results
 
 A summary of experiment runs is saved to:
 
-* `reports/experiment_runs_summary.csv`
-* `reports/experiment_runs_summary.md`
+- `reports/experiment_runs_summary.csv`
+- `reports/experiment_runs_summary.md`
 
 These files provide evidence of multiple MLflow runs and allow comparison between models.
 
@@ -124,9 +123,9 @@ pytest tests/ -v
 
 Tests cover:
 
-* data validation
-* preprocessing logic
-* model performance thresholds
+- data validation
+- preprocessing logic
+- model performance thresholds
 
 ---
 
@@ -136,10 +135,10 @@ GitHub Actions is used to automate the workflow.
 
 The pipeline:
 
-* installs dependencies
-* runs preprocessing
-* executes pytest tests
-* trains the model
+- installs dependencies
+- runs `dvc repro`
+- executes pytest tests
+- trains the model
 
 This ensures code quality and reproducibility on every push.
 
@@ -151,15 +150,15 @@ Data drift monitoring is implemented using the Evidently library.
 
 ### Approach
 
-* Training data is used as the reference dataset
-* A simulated production dataset is created by modifying feature distributions
+- Training data is used as the reference dataset
+- A simulated production dataset is created by modifying feature distributions
 
 ### Simulated Production Changes
 
-* `MonthlyIncome` multiplied by 2
-* `DistanceFromHome` increased by 20
-* Increased proportion of `OverTime = "Yes"`
-* Shift in `JobRole` distribution toward `"Sales Executive"`
+- `MonthlyIncome` multiplied by 2
+- `DistanceFromHome` increased by 20
+- Increased proportion of `OverTime = "Yes"`
+- Shift in `JobRole` distribution toward `"Sales Executive"`
 
 ### Results
 
@@ -171,8 +170,8 @@ reports/drift_report.html
 
 Observed output:
 
-* Drift Share: 0.00%
-* Drifted Columns: None detected
+- Drift Share: 0.00%
+- Drifted Columns: None detected
 
 ### Interpretation
 
@@ -182,9 +181,9 @@ However, the simulation demonstrates how drift can occur, and monitoring remains
 
 ### Recommended Actions
 
-* investigate the source of drift
-* continue monitoring if performance remains stable
-* retrain the model if drift persists
+- investigate the source of drift
+- continue monitoring if performance remains stable
+- retrain the model if drift persists
 
 The script is configured to fail when drift exceeds a threshold, enabling automated monitoring.
 
@@ -192,13 +191,13 @@ The script is configured to fail when drift exceeds a threshold, enabling automa
 
 ## Key Technologies
 
-* Python
-* Scikit-learn
-* MLflow
-* DVC
-* Pytest
-* GitHub Actions
-* Evidently
+- Python
+- Scikit-learn
+- MLflow
+- DVC
+- Pytest
+- GitHub Actions
+- Evidently
 
 ---
 
@@ -206,9 +205,9 @@ The script is configured to fail when drift exceeds a threshold, enabling automa
 
 This project demonstrates a complete MLOps workflow, including:
 
-* reproducible data pipelines
-* experiment tracking
-* automated testing and CI/CD
-* model monitoring
+- reproducible data pipelines
+- experiment tracking
+- automated testing and CI/CD
+- model monitoring
 
 It reflects real-world practices for deploying and maintaining machine learning systems.
