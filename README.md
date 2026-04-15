@@ -42,3 +42,22 @@ If this were a real production system, I would recommend:
 - retraining the model if the drift persists or model quality drops
 
 The script is also configured to exit with a non-zero status code when drift exceeds the configured threshold, which makes it suitable for automated monitoring workflows.
+
+## DVC Data Versioning
+
+This project uses DVC to track the raw dataset instead of storing the dataset directly in Git.
+
+### DVC Files Included
+
+- `.dvc/`
+- `data/raw/WA_Fn-UseC_-HR-Employee-Attrition.csv.dvc`
+- `dvc.yaml`
+- `dvc.lock`
+
+### Reproducing the Data Pipeline
+
+From a fresh clone, run:
+
+```bash
+dvc pull
+dvc repro
