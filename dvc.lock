@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   preprocess:
-    cmd: py src/preprocess.py
+    cmd: python src/preprocess.py
     deps:
     - path: configs/config.yaml
       hash: md5
