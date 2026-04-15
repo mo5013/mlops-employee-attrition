@@ -28,13 +28,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Pull data with DVC
+      - name: Reproduce data pipeline with DVC
         run: |
-          python -m dvc pull
-
-      - name: Run preprocessing
-        run: |
-          python src/preprocess.py
+          python -m dvc repro
 
       - name: Run tests
         run: |
@@ -60,13 +56,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Pull data with DVC
+      - name: Reproduce data pipeline with DVC
         run: |
           python -m dvc repro
-
-      - name: Run preprocessing
-        run: |
-          python src/preprocess.py
 
       - name: Run training
         run: |
